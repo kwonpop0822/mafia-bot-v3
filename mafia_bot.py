@@ -8,6 +8,7 @@ from collections import Counter, defaultdict
 from dataclasses import dataclass, field
 from typing import Optional
 
+from dotenv import load_dotenv
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     Application,
@@ -25,8 +26,15 @@ from mafia_v3 import MafiaStore, display_name, register_v3_handlers
 # 0. 기본 설정
 # ============================================================
 
+# 프로젝트 루트의 .env를 자동으로 읽는다. 실제 운영 환경의 환경변수는 덮어쓰지 않는다.
+PROJECT_DIR = Path(__file__).resolve().parent
+load_dotenv(PROJECT_DIR / ".env")
+
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN", "YOUR_TELEGRAM_BOT_TOKEN")
 DEV_PASSWORD = os.getenv("MAFIA_DEV_PASSWORD", "20150822")
+
+_data_dir_value = Path(os.getenv("MAFIA_DATA_DIR", "data"))
+DATA_DIR = _data_dir_value if _data_dir_value.is_absolute() else PROJECT_DIR / _data_dir_value
 
 MAX_PLAYERS = 16
 
@@ -36,7 +44,7 @@ MAX_PLAYERS = 16
 # ============================================================
 
 rooms = {}
-store = MafiaStore(Path(os.getenv("MAFIA_DATA_DIR", "data")) / "mafia_v3.sqlite3")
+store = MafiaStore(DATA_DIR / "mafia_v3.sqlite3")
 
 dev_forced_roles = {}
 

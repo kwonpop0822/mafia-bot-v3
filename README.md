@@ -26,8 +26,8 @@ cd mafia-bot-v3
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-export TELEGRAM_TOKEN='BotFather에서_받은_토큰'
-export MAFIA_DEV_PASSWORD='강한_개발자_비밀번호'
+cp .env.example .env
+# .env 파일을 열어 TELEGRAM_TOKEN과 MAFIA_DEV_PASSWORD를 실제 값으로 변경
 python mafia_bot.py
 ```
 
@@ -42,7 +42,7 @@ python mafia_bot.py
 | `MAFIA_DATA_DIR` | 아니오 | SQLite 데이터 파일을 둘 디렉터리 | `data` |
 | `LOG_LEVEL` | 아니오 | `DEBUG`, `INFO`, `WARNING`, `ERROR` | `INFO` |
 
-`.env.example`을 복사해 참고할 수 있지만, 현재 코드는 환경변수를 직접 읽습니다. 쉘 환경, Docker secrets, systemd `EnvironmentFile` 등 배포 환경에 맞는 방식으로 주입하세요.
+프로젝트 루트의 `.env` 파일은 실행 시 자동으로 로드됩니다. 처음 실행할 때는 `cp .env.example .env`를 실행한 뒤, `.env`의 `TELEGRAM_TOKEN`과 `MAFIA_DEV_PASSWORD`를 실제 값으로 바꾸세요. 운영 환경에서 이미 설정된 환경변수는 `.env`보다 우선하므로 Docker secrets, systemd `EnvironmentFile`, 호스팅 플랫폼의 비밀 변수도 그대로 사용할 수 있습니다.
 
 ## 기본 게임 명령어
 
