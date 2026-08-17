@@ -3427,6 +3427,16 @@ async def error_handler(update, context):
     )
 
 
+def ensure_event_loop():
+    """Python 3.14+ 및 Termux에서 run_polling 전에 기본 이벤트 루프를 보장한다."""
+    try:
+        return asyncio.get_event_loop()
+    except RuntimeError:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        return loop
+
+
 def main():
 
     if (
@@ -3621,6 +3631,8 @@ def main():
         "🧠 개선된 밤 행동 동기화"
     )
 
+    # Python 3.14는 기본 이벤트 루프를 자동 생성하지 않을 수 있다.
+    ensure_event_loop()
     app.run_polling()
 
 

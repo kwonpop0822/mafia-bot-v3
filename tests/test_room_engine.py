@@ -1,6 +1,14 @@
+import asyncio
+import threading
 import unittest
 
-from mafia_bot import MafiaRoom, add_ai_bot_to_room, generate_room_code, rooms
+from mafia_bot import (
+    MafiaRoom,
+    add_ai_bot_to_room,
+    ensure_event_loop,
+    generate_room_code,
+    rooms,
+)
 
 
 class MafiaRoomEngineTests(unittest.TestCase):
@@ -44,6 +52,23 @@ class MafiaRoomEngineTests(unittest.TestCase):
         rooms["ABCDE"] = MafiaRoom("ABCDE", 1)
         for _ in range(30):
             self.assertNotEqual(generate_room_code(), "ABCDE")
+
+    def test_ensure_event_loop_creates_loop_in_thread_without_default(self):
+        result = {}
+
+        def worker():
+            loop = ensure_event_loop()
+            result["is_running"] = loop.is_running()
+            result["is_current"] = asyncio.get_event_loop() is loop
+            loop.close()
+            asyncio.set_event_loop(None)
+
+        thread = threading.Thread(target=worker)
+        thread.start()
+        thread.join()
+
+        self.assertFalse(result["is_running"])
+        self.assertTrue(result["is_current"])
 
 
 if __name__ == "__main__":
